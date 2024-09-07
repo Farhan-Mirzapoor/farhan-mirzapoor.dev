@@ -2,7 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, UserRoundMinus, UserRoundPen } from "lucide-react";
+//import { deleteUser } from "@/db/queries/delete";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export type user = {
 	id: number;
@@ -25,6 +27,7 @@ export const columns: ColumnDef<user>[] = [
 			);
 		},
 	},
+
 	{
 		accessorKey: "name",
 		header: "name",
@@ -32,5 +35,30 @@ export const columns: ColumnDef<user>[] = [
 	{
 		accessorKey: "phone",
 		header: "phone",
+	},
+	{
+		id: "actions",
+		cell: ({ row }) => {
+			const user = row.original;
+
+			return (
+				<>
+					<Dialog>
+						<DialogTrigger>
+							<UserRoundPen className="size-4" />
+						</DialogTrigger>
+						<DialogContent>test</DialogContent>
+					</Dialog>
+
+					<Button
+						variant="ghost"
+						className="h-8 w-8 p-0"
+						//onClick={() => deleteUser(user.id)}
+					>
+						<UserRoundMinus className="size-4" />
+					</Button>
+				</>
+			);
+		},
 	},
 ];

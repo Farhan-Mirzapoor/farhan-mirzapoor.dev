@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+"use server";
 import { getStudents } from "@/db/queries/select";
 import { user, columns } from "./columns";
 import { DataTable } from "./data-table";
@@ -6,18 +6,46 @@ import { InsertUser } from "@/db/schema";
 import { createUser } from "@/db/queries/insert";
 import { deleteUser } from "@/db/queries/delete";
 import { updateUser } from "@/db/queries/update";
-import { UserForm } from "@/components/newuser";
+import { formSchema, UserForm } from "@/components/newuser";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
-	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import UForm from "@/components/userform";
 
 import { Button } from "@/components/ui/button";
+import { z } from "zod";
 
+/* export async function onSubmit(values: z.infer<typeof formSchema>) {
+	 const count = await getStudents().then((students) => students.length);
+	const newUser: InsertUser = {
+		id: count + 1,
+		fname: values.fname,
+		lname: values.lname,
+		phone: values.phone,
+	};
+	await createUser(newUser); 
+}
+ */
+
+export async function onSubmit(formdata: FormData): Promise<void> {
+	const id = formdata.get("id") as unknown as number;
+	const fname = formdata.get("fname") as string;
+	const lname = formdata.get("lname") as string;
+	const phone = formdata.get("phone") as string;
+
+	//const count = await getStudents().then((students) => students.length);
+	const newUser: InsertUser = {
+		id: id,
+		fname: fname,
+		lname: lname,
+		phone: phone,
+	};
+	await createUser(newUser);
+}
 async function getData(): Promise<user[]> {
 	const count = await getStudents().then((students) => students.length);
 	const users = await getStudents();
@@ -37,8 +65,8 @@ async function getData(): Promise<user[]> {
 export default async function Home() {
 	const data = await getData();
 
-	const count = await getStudents().then((students) => students.length);
-	const users = await getStudents();
+	/* const count = await getStudents().then((students) => students.length);
+	const users = await getStudents(); */
 
 	/* const newUser: InsertUser = {
 		id: count + 1,
@@ -47,7 +75,7 @@ export default async function Home() {
 		phone: "123",
 	}; */
 
-	// await createUser(newUser);
+	//await createUser(newUser);
 
 	// const deluser = deleteUser(8);
 	// const upuser = updateUser(20, { fname: "farhan" });
@@ -61,7 +89,7 @@ export default async function Home() {
 					</DialogTrigger>
 					<DialogContent>
 						<DialogDescription className="sr-only">Add User</DialogDescription>
-						<UserForm />
+						<UForm></UForm>
 					</DialogContent>
 				</Dialog>
 				<DataTable columns={columns} data={data} />

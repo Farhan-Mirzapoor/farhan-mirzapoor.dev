@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
 	Form,
 	FormControl,
@@ -14,12 +15,9 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { InsertUser } from "@/db/schema";
-import { createUser } from "@/db/queries/insert";
-import { getStudents } from "@/db/queries/select";
+import { onSubmit } from "@/app/page";
 
-const formSchema = z.object({
+export const formSchema = z.object({
 	fname: z.string().min(2, {
 		message: "First name must be at least 2 characters.",
 	}),
@@ -45,22 +43,15 @@ export function UserForm() {
 			phone: "",
 		},
 	});
-
-	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const count = await getStudents().then((students) => students.length);
-		const newUser: InsertUser = {
-			id: 1, //count + 1,
-			fname: values.fname,
-			lname: values.lname,
-			phone: values.phone,
-		};
-		await createUser(newUser);
-	}
+	const formaction = async (formdata: FormData) => {
+		await onSubmit(formdata);
+	};
 
 	return (
 		<Form {...form}>
 			<form
-				onSubmit={form.handleSubmit(onSubmit)}
+				action={formaction}
+				//onSubmit={form.handleSubmit(onSubmit)}
 				className="flex justify-center flex-col w-full gap-4"
 			>
 				<FormField
